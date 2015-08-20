@@ -96,6 +96,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // Mark - UISearchResultsUpdating
     func updateSearchResultsForSearchController(searchController: UISearchController) {
+        
+        //  Text inputted from searchbar
+        let searchString = self.searchController.searchBar.text
+        let selectedScopeButtonIndex = self.searchController.searchBar.selectedScopeButtonIndex
+        self.filterContentForSearch(searchString, scope: selectedScopeButtonIndex)
+        self.tableView.reloadData()
     }
     
     //  Helper to filter out the search. Scope bar are options below the searchbar.
@@ -103,11 +109,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.filteredSuggestedSearchFoods = self.suggestedSearchFoods.filter({ (food : String) -> Bool in
             
             //  Does searchText exist (rangeOfString) in the array. If it is in there, then add it to the filteredSuggestedFoods.
-            var foodMatch = food.lowercaseString.rangeOfString(searchText)
+            var foodMatch = food.rangeOfString(searchText)
             
             //  !=nil = there's a match
             return foodMatch != nil
         })
+    }
+    //  Mark - UISearchBarDelegate - This function gets called when we press search in the search bar
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        makeRequest(searchBar.text)
     }
     
     //  makeRequest, searchString, url, task
@@ -116,6 +126,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         //  NSURLSession downloads content via HTTP.
         let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+            
+            //  This will convert data into NSString
+            var stringData = NSString(data: data, encoding: NSUTF8StringEncoding)
             println(data)
             println(response)
         })
