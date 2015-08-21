@@ -18,6 +18,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var tableView: UITableView!
     
+    let kAppId = "3bf6cb98"
+    let kAppKey = "2a65d108977ab1acbd9b5e90af22cb5f"
+    
     //  New to iOS8 that can only be added programatically and not through XCode
     var searchController: UISearchController!
 
@@ -122,17 +125,50 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //  makeRequest, searchString, url, task
     func makeRequest (searchString : String) {
-        let url = NSURL(string: "https://api.nutritionix.com/v1_1/search/\(searchString)?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cbrand_name%2Citem_id%2Cbrand_id&appId=3bf6cb98&appKey=2a65d108977ab1acbd9b5e90af22cb5f")
         
-        //  NSURLSession downloads content via HTTP.
-        let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+        //  How to make a HTTP Get Request
+//        let url = NSURL(string: "https://api.nutritionix.com/v1_1/search/\(searchString)?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cbrand_name%2Citem_id%2Cbrand_id&appId=\(kAppId)&appKey=\(kAppKey)")
+//        
+//        //  NSURLSession downloads content via HTTP.
+//        let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+//            
+//            //  This will convert data into NSString
+//            var stringData = NSString(data: data, encoding: NSUTF8StringEncoding)
+//            println(data)
+//            println(response)
+//        })
+//        task.resume()
+        
+        //  Mutable meaning it's changeable
+        var request = NSMutableURLRequest(URL: NSURL(string: "https://api.nutritionix.com/v1_1/search/")!)
+        let session = NSURLSession.sharedSession()
+        request.HTTPMethod = "POST"
+        var params = [
+            "appId" : kAppId,
+            "appKey" : kAppKey,
+            "fields" : ["item_name", "brand_name", "keywords", "usda_fields"],
+            "limit"  : "50",
+            "query"  : searchString,
+            "filters": ["exists":["usda_fields": true]]]
+        var error: NSError?
+        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: nil, error: &error)
+        
+        //  Specify that this is application / json. Helping out the request that this is json.
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        //  Create HTTP call request. Call completion handler when this is complete.
+        var task = session.dataTaskWithRequest(request, completionHandler: { (data, response, err) -> Void in
             
-            //  This will convert data into NSString
+            //  Convert data into readable string
             var stringData = NSString(data: data, encoding: NSUTF8StringEncoding)
-            println(data)
-            println(response)
+            println(stringData)
+            
+            //  Convert string into dictionary
+            var conversionError: NSError?
+            var jsonDictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableLeaves, error: &conversionError) as? NSDictionary
+            println(jsonDictionary)
         })
         task.resume()
     }
 }
-
