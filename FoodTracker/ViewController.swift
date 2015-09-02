@@ -36,6 +36,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //  Array is set up to store tuple from the data controller
     var apiSearchForFoods:[(name: String, idValue: String)] = []
     
+    //  Set up instance of dataController
+    var dataController = DataController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -73,7 +76,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Dispose of any resources that can be recreated.
     }
     
-    // Mark - UITableViewDataSource
+    // MARK - UITableViewDataSource
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         //  Display information on tableView
@@ -137,12 +140,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             makeRequest(searchFoodName)
         }
         else if selectedScopeButtonIndex == 1 {
+            //  Need idValue in order to call our function saveUSDAItemForId
+            let idValue = apiSearchForFoods[indexPath.row].idValue
+            self.dataController.saveUSDAItemForId(idValue, json: jsonResponse)
         }
         else if selectedScopeButtonIndex == 2 {
         }
     }
     
-    // Mark - UISearchResultsUpdating
+    // MARK - UISearchResultsUpdating
     func updateSearchResultsForSearchController(searchController: UISearchController) {
         
         //  Text inputted from searchbar
@@ -163,11 +169,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             return foodMatch != nil
         })
     }
-    //  Mark - UISearchBarDelegate - This function gets called when we press search in the search bar
+    //  MARK - UISearchBarDelegate - This function gets called when we press search in the search bar
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         //  When we press the search button, we want to change the scope button so that we're moving from 1st to 2nd scope button
         self.searchController.searchBar.selectedScopeButtonIndex = 1
         makeRequest(searchBar.text)
+    }
+    
+    //  Allow table to update each time we select a different scope button
+    func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        self.tableView.reloadData()
     }
     
     //  makeRequest, searchString, url, task
