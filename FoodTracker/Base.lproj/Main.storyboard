@@ -20,6 +20,11 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="UNe-iN-pMz">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="jnQ-jW-Vix">
+                                    <rect key="frame" x="0.0" y="130" width="600" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="color" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </activityIndicatorView>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="cmL-EL-z7G">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
@@ -45,6 +50,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="nvI-F7-Typ"/>
                     <connections>
+                        <outlet property="myActivityIndicator" destination="jnQ-jW-Vix" id="I5A-hm-c3A"/>
                         <outlet property="tableView" destination="UNe-iN-pMz" id="xbi-h1-cSt"/>
                         <segue destination="zsu-2U-KQa" kind="show" identifier="toDetailVCSegue" id="8n0-RO-2Jk"/>
                     </connections>

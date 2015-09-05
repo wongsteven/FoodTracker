@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import CoreData
 
+let kUSDAItemCompleted = "USDAItemInstanceComplete"
+
 //  Convert dictionary from VC into an array of keywords in the search results.
 class DataController {
     
@@ -172,6 +174,9 @@ class DataController {
                                 }
                                 //  Save
                                 (UIApplication.sharedApplication().delegate as AppDelegate).saveContext()
+                                
+                                //  We don't have access to the instance of the usda item because we haven't saved it yet. We are going to try a solution by writing our own NSNotificationCenter.
+                                NSNotificationCenter.defaultCenter().postNotificationName(kUSDAItemCompleted, object: usdaItem)
                             }
                         }
                     }
